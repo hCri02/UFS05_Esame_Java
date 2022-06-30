@@ -34,7 +34,7 @@ public class ClientTCPHandler {
             out.println(" - all_sorted\n");
 
             while ((userInput = in.readLine()) != null) {
-                out.println(process(userInput));
+                System.out.println(process(userInput));
                 out.println("\n");
             }
         } catch (IOException e) {
@@ -54,23 +54,23 @@ public class ClientTCPHandler {
         Gson gson = new Gson();
         String result;
 
-        if (input.equals("more_expensive")) {
-            sortPrice();
-            result = gson.toJson(cars);
-            return result;
-
-        } else if (input.equals("all")) {
-            result = gson.toJson(cars);
-            return result;
-
-        } else if (input.equals("all_sorted")) {
-            sortBrand();
-            result = gson.toJson(cars);
-            return result;
-        } else {
-            result = "Opzione non valida!";
-            return result;
+        switch (input){
+            case "more_expensive":
+                sortPrice();
+                result = gson.toJson(cars);
+                return result;
+            case "all":
+                result = createJson();
+                return result;
+            case "all_sorted":
+                sortBrand();
+                result = gson.toJson(cars);
+                return result;
+            default:
+                result = "Opzione non valida!";
+                return result;
         }
+
     }
 
     private BufferedReader allocateReader(Socket clientSocket) {
@@ -107,4 +107,52 @@ public class ClientTCPHandler {
         });
     }
 
+    private String createJson() {
+        String jsonStr = null;
+        String json = null;
+        int c = 0;
+
+        for (Car car : cars) {
+            c = c + 1;
+            switch (c) {
+                case 1:
+                    jsonStr = "[ {\"id\":" + car.getId() + ",\n" +
+                            " \"brand\":" + car.getBrand() + ",\n" +
+                            " \"price\":" + car.getPrice() + ",\n" +
+                            " },\n";
+                    break;
+                case 2:
+                    jsonStr = " {\"id\":" + car.getId() + ",\n" +
+                            " \"brand\":" + car.getBrand() + ",\n" +
+                            " \"price\":" + car.getPrice() + ",\n" +
+                            " },\n";
+                    break;
+                case 3:
+                    jsonStr = " {\"id\":" + car.getId() + ",\n" +
+                            " \"brand\":" + car.getBrand() + ",\n" +
+                            " \"price\":" + car.getPrice() + ",\n" +
+                            " }\n" +
+                            "]\n";
+            }
+
+            json = json + jsonStr;
+        }
+        return json;
+    }
+
 }
+
+
+/* jsonStr = "[ {\"id\":" + car.getId() + ",\n" +
+                " \"brand\":" + car.getBrand() + ",\n" +
+                " \"price\":" + car.getPrice() + ",\n" +
+                " },\n" +
+                " {\"id\":" + car.getId() + ",\n" +
+                " \"brand\":" + car.getBrand() + ",\n" +
+                " \"price\":" + car.getPrice() + ",\n" +
+                " },\n" +
+                " {\"id\":" + car.getId() + ",\n" +
+                " \"brand\":" + car.getBrand() + ",\n" +
+                " \"price\":" + car.getPrice() + ",\n" +
+                " }\n" +
+                "]\n"; */
